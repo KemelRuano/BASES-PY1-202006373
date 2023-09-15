@@ -14,7 +14,6 @@ def CargaMasiva(carpeta) :
     sql_commands = [command.strip() for command in sql_commands if command.strip()]
 
     for command in sql_commands:
-         print(command)
          cursor.execute(command)
     
     #-----------------------------------------------  Cargar csv ciudadanos
@@ -118,8 +117,35 @@ def CargaMasiva(carpeta) :
     
     #------------------------------------------------------ Cargar csv voto
     
-    
+    TuplaDate = []
+    TuplaDate2 = []
+    ReadVoto = open(carpeta + "\\votaciones.csv", "r",encoding='utf-8')
+    SplitVoto = csv.reader(ReadVoto,delimiter = ",")
+    next(SplitVoto,None)
+    contid = 0
+    for line in SplitVoto:
+        id_voto = line[0]
+        id_candidate = line[1]
+        dpi = line[2]
+        mesa_id = line[3]
+        fecha_hora = ConverDataTime(line[4])
+        newVoto = (id_voto,fecha_hora,dpi,mesa_id)
+        TuplaDate.append(newVoto)
+        newNorma = (contid,id_candidate,id_voto)
+        TuplaDate2.append(newNorma)
+        contid += 1
         
+    
+    
+    #Delete duplicados
+    conjunto = set(TuplaDate)
+    NewTuple = tuple(conjunto)
+    cursor.executemany("INSERT INTO proyecto1.temp_voto ( id_voto,fecha_hora,id_dpi,id_mesa) VALUES (%s,%s,%s,%s)",NewTuple)
+    cursor.execute("INSERT INTO proyecto1.voto ( id_voto,fecha_hora,id_dpi,id_mesa) SELECT id_voto,fecha_hora,id_dpi,id_mesa FROM proyecto1.temp_voto")
+    
+    cursor.executemany("INSERT INTO proyecto1.temp_normavoto (id_normavoto , id_candidato,id_voto) VALUES (%s,%s,%s)",TuplaDate2)
+    cursor.execute("INSERT INTO proyecto1.normavoto (id_normavoto , id_candidato,id_voto) SELECT id_normavoto , id_candidato,id_voto FROM proyecto1.temp_normavoto")
+   
     connection.commit()
     cursor.close()
     connection.close()
@@ -144,4 +170,9 @@ def GenerateModel():
 def ConvertirFecha(fecha):
     fechaobj = datetime.strptime(fecha, "%d/%m/%Y")
     NewFecha = fechaobj.strftime("%Y-%m-%d")
+    return NewFecha
+
+def ConverDataTime(fecha):
+    fechaobj = datetime.strptime(fecha, "%d/%m/%Y %H:%M")
+    NewFecha = fechaobj.strftime("%Y-%m-%d %H:%M:%S")
     return NewFecha
