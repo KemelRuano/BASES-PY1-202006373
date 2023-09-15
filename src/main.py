@@ -76,6 +76,10 @@ def  Consulta10():
 def  Consulta11():
     return Response11()
 
+@app.route('/eliminarmodelo')
+def  DeleteMod():
+    return DeleteModel()
+
 if __name__ == '__main__':
      app.run(debug=True)
 

@@ -116,6 +116,8 @@ def Response1():
     
     ListResponse = cursor.fetchall()
     ListEnv = []
+    
+    
     for new in ListResponse:
         credenciales = OrderedDict()
         credenciales['Presidente'] = new[0]
@@ -312,3 +314,15 @@ def Response11():
     cursor.close()
     connection.close()
     return json.dumps(ListEnv)
+
+def DeleteModel():
+    try:
+            connection = mysql.connector.connect(**db)
+            cursor = connection.cursor()
+            cursor.execute('DROP DATABASE proyecto1;')
+            cursor.close()
+            connection.close()
+            return json.dumps({'consulta':'Modelo Eliminado Exitosamente'})
+        
+    except mysql.connector.Error as err:
+        return json.dumps({'ERROR':'La base de datos proyecto1 no existe'})
