@@ -4,7 +4,6 @@ from flask import Flask
 import json
 from CargarDatos import Carga
 from Modelo.Consultas import *
-from pathlib import Path
 app = Flask(__name__)
 
 
