@@ -1,9 +1,10 @@
 from collections import OrderedDict
+import os
 from flask import Flask
 import json
 from CargarDatos import Carga
 from Modelo.Consultas import *
-
+from pathlib import Path
 app = Flask(__name__)
 
 
@@ -17,9 +18,10 @@ def Root():
     return env
 
 @app.route('/cargartabtemp')
-def CargaMasiva():
-    resivido = Carga.CargaMasiva("C:\\Users\\LENOVO\\Downloads\\TSEdatasets")
-    print(resivido)
+def CargaMasiva():    
+    directorio_actual = os.path.dirname(os.path.abspath(__file__))
+    ruta_relativa = os.path.join(directorio_actual, "Datos")
+    resivido = Carga.CargaMasiva(ruta_relativa)
     return resivido
 
 @app.route('/crearmodelo')

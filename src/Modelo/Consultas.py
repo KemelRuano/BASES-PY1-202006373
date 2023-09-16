@@ -325,4 +325,4 @@ def DeleteModel():
             return json.dumps({'consulta':'Modelo Eliminado Exitosamente'})
         
     except mysql.connector.Error as err:
-        return json.dumps({'ERROR':'La base de datos proyecto1 no existe'})
+        return json.dumps({'ERROR':'No existe un modelo para eliminar'})
